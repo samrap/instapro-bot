@@ -1,0 +1,13 @@
+{
+  "browser": "firefox",
+  "headless": true,
+  "relationship_bounds": {
+    "enabled": true,
+    "potency_ratio": null,
+    "delimit_by_numbers": true,
+    "max_followers": 3000,
+    "min_followers": 100,
+    "max_following": 2000,
+    "min_following": 50
+  }
+}
