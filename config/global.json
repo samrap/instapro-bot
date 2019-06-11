@@ -1,3 +1,7 @@
 {
-  "name": "instapro"
+  "name": "instapro",
+  "logging": {
+    "path": "/var/log/instapro",
+    "stream": true
+  }
 }

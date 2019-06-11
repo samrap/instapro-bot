@@ -1,4 +1,6 @@
 import os
+import logging
+from pythonjsonlogger import jsonlogger
 from dotenv import load_dotenv
 import bot
 import config
