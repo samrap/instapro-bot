@@ -1,9 +1,9 @@
 import logging
-
+import os
 from instapy import InstaPy
 from pythonjsonlogger import jsonlogger
 
-def build(username, password, config):
+def build(username, password, config, *config_func):
     # Create a new session with `selenium_local_session` set to `False`, as we
     # do not yet want to create the browser session without applying all of
     # our configurator functions.
@@ -15,7 +15,7 @@ def build(username, password, config):
     set_browser(session, config.get('browser'))
     set_headless(session, config.get('headless'))
     set_relationship_bounds(session, config.get('relationship_bounds'))
-    #set_logging(session, config)
+    set_logging(session, config.get('logging'))
 
     return session
 
@@ -34,6 +34,26 @@ def set_relationship_bounds(session, bounds):
                                     min_followers=bounds.get('min_followers'),
                                     min_following=bounds.get('min_following'))
 
-# TODO(samrap) figure out the type of logging we want.
-def set_logging(session, config):
-    pass
+def set_logging(session, log_config):
+    logger = logging.getLogger(session.username)
+    logger.setLevel(logging.DEBUG)
+
+    file_handler = logging.FileHandler(os.path.join(log_config.get('path'), 'instapro.log'))
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(jsonlogger.JsonFormatter())
+    logger.addHandler(file_handler)
+
+    if log_config.get('stream', False):
+        stream_handler = logging.StreamHandler()
+        stream_handler.setLevel(logging.DEBUG)
+        stream_handler.setFormatter(
+            logging.Formatter(
+                '%(levelname)s [%(asctime)s] [%(username)s]  %(message)s',
+                datefmt='%Y-%m-%d %H:%M:%S'))
+        logger.addHandler(stream_handler)
+
+    logger = logging.LoggerAdapter(logger, {
+        'username': session.username,
+    })
+
+    session.logger = logger
